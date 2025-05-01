@@ -120,8 +120,32 @@ public class Model {
      * 2. There are two adjacent tiles with the same value.
      */
     public boolean atLeastOneMoveExists() {
-        // TODO: Fill in this function.
+        // 检查是否有空格.
+        if (emptySpaceExists()) {
+            return true;
+        }
 
+        int size = this.size();
+        // 检查是否有相邻的相同值方块.
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                Tile currentTile = this.tile(x, y);
+                // 检查右侧相邻方块.
+                if (x < size - 1) {
+                    Tile rightTile = this.tile(x + 1, y);
+                    if (currentTile.value() == rightTile.value()) {
+                        return true;
+                    }
+                }
+                // 检查上方相邻方块.
+                if (y < size - 1) {
+                    Tile upTile = this.tile(x, y + 1);
+                    if (currentTile.value() == upTile.value()) {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 
@@ -141,10 +165,32 @@ public class Model {
      */
     public void moveTileUpAsFarAsPossible(int x, int y) {
         Tile currTile = board.tile(x, y);
+        if (currTile == null) {
+            return;
+        }
         int myValue = currTile.value();
         int targetY = y;
+        int size = board.size();
 
-        // TODO: Tasks 5, 6, and 10. Fill in this function.
+        // 找到目标位置
+        while (targetY < size - 1) {
+            Tile nextTile = board.tile(x, targetY + 1);
+            if (nextTile == null) {
+                targetY++;
+            } else if (nextTile.value() == myValue && !nextTile.wasMerged()) {
+                // 合并方块
+                board.move(x, targetY + 1, currTile);
+                score += 2 * myValue;
+                return;
+            } else {
+                break;
+            }
+        }
+
+        // 如果没有合并，只是移动方块
+        if (targetY != y) {
+            board.move(x, targetY, currTile);
+        }
     }
 
     /** Handles the movements of the tilt in column x of the board
