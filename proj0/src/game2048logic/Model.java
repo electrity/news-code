@@ -114,7 +114,7 @@ public class Model {
     }
 
     /**
-     * Returns true if there are any valid moves on the board.
+     * Returns true if there are any valid moves on the board .
      * There are two ways that there can be valid moves:
      * 1. There is at least one empty space on the board.
      * 2. There are two adjacent tiles with the same value.
