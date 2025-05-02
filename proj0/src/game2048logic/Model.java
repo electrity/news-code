@@ -87,7 +87,7 @@ public class Model {
         int size = this.size();
         for (int x = 0; x < size; x += 1) {
             for (int y = 0; y < size; y += 1) {
-                if (this.tile(x,y) == null) {
+                if (this.tile(x, y) == null) {
                     return true;
                 }
             }
@@ -104,7 +104,7 @@ public class Model {
         int size = this.size();
         for (int x = 0; x < size; x += 1) {
             for (int y = 0; y < size; y += 1) {
-                Tile tile = this.tile(x,y);
+                Tile tile = this.tile(x, y);
                 if (tile != null && tile.value() == MAX_PIECE) {
                     return true;
                 }
@@ -130,18 +130,20 @@ public class Model {
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 Tile currentTile = this.tile(x, y);
-                // 检查右侧相邻方块.
-                if (x < size - 1) {
-                    Tile rightTile = this.tile(x + 1, y);
-                    if (currentTile.value() == rightTile.value()) {
-                        return true;
+                if (currentTile != null) {
+                    // 检查右侧相邻方块.
+                    if (x < size - 1) {
+                        Tile rightTile = this.tile(x + 1, y);
+                        if (rightTile != null && currentTile.value() == rightTile.value()) {
+                            return true;
+                        }
                     }
-                }
-                // 检查上方相邻方块.
-                if (y < size - 1) {
-                    Tile upTile = this.tile(x, y + 1);
-                    if (currentTile.value() == upTile.value()) {
-                        return true;
+                    // 检查上方相邻方块.
+                    if (y < size - 1) {
+                        Tile upTile = this.tile(x, y + 1);
+                        if (upTile != null && currentTile.value() == upTile.value()) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -151,7 +153,6 @@ public class Model {
 
     /**
      * Moves the tile at position (x, y) as far up as possible.
-     *
      * Rules for Tilt:
      * 1. If two Tiles are adjacent in the direction of motion and have
      *    the same value, they are merged into one Tile of twice the original
@@ -173,8 +174,9 @@ public class Model {
         int size = board.size();
 
         // 找到目标位置
+        Tile nextTile;
         while (targetY < size - 1) {
-            Tile nextTile = board.tile(x, targetY + 1);
+            nextTile = board.tile(x, targetY + 1);
             if (nextTile == null) {
                 targetY++;
             } else if (nextTile.value() == myValue && !nextTile.wasMerged()) {
@@ -199,11 +201,21 @@ public class Model {
      * so we are tilting the tiles in this column up.
      * */
     public void tiltColumn(int x) {
-        // TODO: Task 7. Fill in this function.
+        int size = board.size();
+        for (int y = size - 2; y >= 0; y -= 1) {
+            moveTileUpAsFarAsPossible(x, y);
+        }
     }
 
     public void tilt(Side side) {
-        // TODO: Tasks 8 and 9. Fill in this function.
+        board.setViewingPerspective(side);
+        int size = board.size();
+        int currCol = 0;
+        while (currCol < size) {
+            tiltColumn(currCol);
+            currCol += 1;
+        }
+        board.setViewingPerspective(Side.NORTH);
     }
 
     /** Tilts every column of the board toward SIDE.
